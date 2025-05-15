@@ -1,0 +1,62 @@
+.navbar-inferior {
+    background-color: #0E3B3E;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-family: century gothic;
+    margin:none;
+    padding: 3px;
+  
+    .navbar-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+    }
+  
+    .nav-item {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 0.5rem;
+      border-radius: 1px;
+  
+      &:hover {
+      
+        outline: #ffffff solid 1px;
+      }
+    }
+    .dropdown{
+        margin-right: 30px;
+        margin-left: 20px;
+    }
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 14px;
+        padding: 0.5rem;
+        cursor: pointer;
+        border-radius: 1px;
+      
+        &:hover {
+          outline: #ffffff solid 1px;
+        }
+      
+        .icon-hamburguesa {
+          width: 15px;
+          height: 15px;
+          fill: white;
+        }
+      
+        .text-todo {
+          display: inline-block;
+        }
+      
+        &::after {
+          display: none !important;
+        }
+      }
+    }      

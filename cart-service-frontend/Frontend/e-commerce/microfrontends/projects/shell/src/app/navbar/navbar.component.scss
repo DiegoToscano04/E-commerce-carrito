@@ -1,0 +1,455 @@
+nav {
+  background-color: #03484D;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5px 15px 1.5px 10px;
+  width: 100%;
+}
+.uis{
+  margin-left: 60px;
+
+}
+.logo{
+ 
+   text-align: center;
+   align-items: center;
+   margin: 1px;
+   margin-bottom: -5px;
+   padding: 5px 8px -5px 0px;
+   height: 50px;
+   margin:0 auto;
+   
+   
+ }
+.dflex {
+  display: flex;
+  align-items: center;
+}
+.item {
+  padding: 10px 10px;
+}
+.item-1{
+  padding: 10px 10px;
+}
+
+.item:hover {
+  border: 1px solid #fff;
+  border-radius: 2px;
+  margin: -1px;
+}
+
+a {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  text-decoration: none;
+  padding: 5px 5px 5px;
+}
+a:hover {
+  border: 1px solid #fff;
+  margin: -1px;
+  border-radius: 3px;
+  border-right: none;
+}
+a span {
+  font-size: 14px;
+  margin-left: -10px;
+}
+p {
+  font-size: 12px;
+  line-height: 15px;
+}
+.item i {
+  padding: 0 3px;
+}
+nav input {
+  width: 740px;
+  padding: 10px;
+  font-size: 17px;
+  border: none;
+  outline: none;
+  color: black;
+}
+nav button {
+  padding: 10px 10px;
+  color: black;
+  font-size: 17px;
+  border: none;
+  border-radius: 5px 0px 0px 5px;
+  cursor: pointer;
+}
+nav .all {
+  background: #ddd;
+  border-radius: 5px 0px 0px 5px;
+}
+nav .search {
+  padding: 10px 17px;
+ margin: -32px;
+  background-color: #D9D9D9;
+  border-radius: 0px 5px 5px 0px;
+  padding: 10px 16px;
+  cursor: pointer;
+
+  align-items: center;
+  justify-content: center;
+
+}
+
+nav .search i,
+nav .all i {
+  color: white;
+  font-size: 20px;
+}
+nav .search:hover {
+  background-color:  #B6B6B6;
+}
+.searchBox{
+  
+  margin-right: 70px;
+  max-width: 800px;
+  
+}
+.box{
+ 
+  margin-left: 30px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: 100%;
+  border-radius: 8px; // Bordes redondeados
+  overflow: hidden;
+  background-color: white;
+  transition: max-width 0.3s ease-in-out; // Transición para un efecto suave
+  // El contenedor de la barra de búsqueda debe alinearse correctamente sin moverse
+   // Máximo ancho para pantallas grandes
+  // Estira el ancho para aprovechar el espacio disponible
+  flex-shrink: 0; // Evita que se reduzca el tamaño más allá del `max-width`
+  margin-right: auto;
+ 
+ 
+}
+.box:hover {
+  border: 2px solid rgb(200, 200, 200);
+  box-shadow: 0px 0px 3px 0px rgb(165, 165, 165);
+  border-radius: 10px;
+}
+
+ul li {
+  list-style: none;
+  font-weight: 500;
+  padding: 1px 5px;
+  font-size: 14px;
+}
+nav submenu i {
+  font-size: 16px;
+}
+.li {
+  margin: -5px;
+  font-size: 20px;
+}
+.bg {
+  position: relative;
+  padding: 6px 6px;
+  margin: -5px 0;
+  margin-right: 10px;
+  background-color: rgb(247, 155, 80);
+}
+
+.search-category {
+  background-color: #ffffff;
+  color: #ABA3A3;
+  font-family: century gothic;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  padding-right: 30px;  // Aumenta el espacio entre la flecha y el texto
+  background-position: right 10px center;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%393939'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-size: 15px;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  border-style: solid;
+  border-color: #cbcbcb;
+
+  &:hover {
+    background-color: #f0f0f0; // Color más oscuro al pasar el mouse
+    cursor: pointer;
+  }
+}
+.search-input {
+  flex-grow: 1;
+  border: none;
+  padding: 6px;
+  font-size: 16px;
+  outline: none;
+  flex:1;
+  min-width: 150px; 
+  max-width: 600px; 
+}
+
+.search-input::placeholder {
+  font-family: century gothic;
+  font-size: 15px;
+  color: #ABA3A3;  
+}
+.nav-link div {
+  display: flex;
+  flex-direction: row;  // Apila el texto verticalmente
+  align-items: flex-start;  // Alinea el texto a la izquierda
+}
+.account {
+  font-size: 14px;  // Ajusta el tamaño de la palabra "Cuenta"
+  color: #ffffff;
+  font-weight: 750;  // Color de la palabra "Cuenta"
+}
+/* Estilo para el ícono de la persona */
+
+//Bienvenido, Ingresa Cuenta, Carrito, Pedidos
+
+// Navbar superior
+
+
+.navbar-nav .nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Asegura que el contenedor y el texto se vean correctamente */
+.navbar-nav .nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 4px;  // Reducido el espacio entre el ícono y el texto
+  transition: border 0.3s ease;  // Efecto suave para el borde
+  border-radius: 5px;  // Bordes
+}
+
+
+
+.carrito-text {
+  margin-top: 10px;
+  margin-left: -5px;
+  font-size: 15px !important;
+  font-weight: 750;  // Hace que "Carrito" esté en negrita
+}
+
+.account {
+  font-size: 14px;  // Ajusta el tamaño de la palabra "Cuenta"
+  color: #ffffff;
+  font-weight: 750;  // Color de la palabra "Cuenta"
+}
+
+.bold {
+  font-weight: 750;  // Hace que "y Pedidos" esté en negrita
+}
+
+/* Estilo para el ícono de camión y el texto de Devoluciones y Pedidos */
+.navbar-nav .nav-item .fa-truck {
+  font-size: 30px;  // Aumenta el tamaño del ícono de camión
+  margin-right: 8px;  // Espacio entre el ícono y el texto
+}
+
+.truck-icon {
+  width: 50px;  // Ajusta el tamaño del ícono aquí
+  height: auto;
+  margin-right: 3px;
+}
+
+
+.nav-link span {
+  font-size: 14px;  // Tamaño más pequeño para los textos "Devoluciones" y "y Pedidos"
+}
+
+.nav-link span:first-child {
+  font-size: 12px;  // Tamaño más pequeño para "Devoluciones"
+}
+
+.nav-link span:last-child {
+  font-size: 12px;  // Tamaño más pequeño para "y Pedidos"
+}
+
+
+
+.cart-count {
+  position: absolute;
+  top: -18px;
+  right: -2px;
+  color: #FDDE3B;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+}
+.nav-link div {
+  display: flex;
+  flex-direction: column;  // Apila el texto verticalmente
+  align-items: flex-start;  // Alinea el texto a la izquierda
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;  // Centra el ícono y el texto verticalmente
+  gap: 8px;  // Espacio entre el ícono y el texto
+  color: #ffffff;  // Color de texto blanco
+  padding: 0;  // Elimina el padding para evitar el efecto de "botón"
+  background-color: transparent;  // Elimina el color de fondo
+}
+.fa-user {
+  font-size: 20px;  // Aumenté el tamaño del ícono
+  margin-right: 0px;  // Reducido el margen entre el ícono y el texto
+}
+//Bienvenido, Ingresa Cuenta, Carrito, Pedidos
+
+
+
+.navbar-nav .nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+/* Asegura que el contenedor y el texto se vean correctamente */
+.navbar-nav .nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 4px;  // Reducido el espacio entre el ícono y el texto
+  transition: border 0.3s ease;  // Efecto suave para el borde
+  border-radius: 5px;  // Bordes
+}
+
+
+
+
+.carrito-text {
+  margin-top: 10px;
+  margin-left: -5px;
+  font-size: 15px !important;
+  font-weight: 750;  // Hace que "Carrito" esté en negrita
+}
+
+.account {
+  font-size: 14px;  // Ajusta el tamaño de la palabra "Cuenta"
+  color: #ffffff;
+  font-weight: 750;  // Color de la palabra "Cuenta"
+}
+
+.bold {
+  font-weight: 750;  // Hace que "y Pedidos" esté en negrita
+}
+
+/* Estilo para el ícono de camión y el texto de Devoluciones y Pedidos */
+.navbar-nav .nav-item .fa-truck {
+  font-size: 30px;  // Aumenta el tamaño del ícono de camión
+  margin-right: 8px;  // Espacio entre el ícono y el texto
+}
+
+.truck-icon {
+  width: 50px;  // Ajusta el tamaño del ícono aquí
+  height: auto;
+  margin-right: 3px;
+}
+
+
+.navbar-nav .nav-item .nav-link {
+  display: flex;
+  align-items: center;  // Centra el ícono y el texto verticalmente
+  gap: 8px;  // Espacio entre el ícono y el texto
+  color: #ffffff;  // Color de texto blanco
+  text-decoration: none;  // Elimina el subrayado del texto
+  padding: 0;  // Elimina el padding para evitar el efecto de "botón"
+  background-color: transparent;  // Elimina el color de fondo
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+  background-color: transparent;  // Mantiene el fondo transparente al pasar el mouse
+  color: #ffffff;  // Mantiene el color blanco al pasar el mouse
+  border-radius: 0;  // Elimina los bordes redondeados
+}
+
+
+.navbar-nav .nav-item .nav-link span {
+  font-size: 14px;  // Tamaño más pequeño para los textos "Devoluciones" y "y Pedidos"
+}
+
+.navbar-nav .nav-item .nav-link span:first-child {
+  font-size: 12px;  // Tamaño más pequeño para "Devoluciones"
+}
+
+.navbar-nav .nav-item .nav-link span:last-child {
+  font-size: 12px;  // Tamaño más pequeño para "y Pedidos"
+}
+
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.cart-icon {
+  width: 30px;  // Ajusta el tamaño del ícono según lo necesites
+  height: auto;  // Mantiene la proporción
+}
+
+.cart-count {
+  position: absolute;
+  top: -18px;
+  right: -2px;
+  color: #FDDE3B;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 20px;
+  text-align: center;
+}
+
+a:hover {
+  border: 1px solid #fff;
+  margin: -1px;
+  border-radius: 3px;
+}
+
+.enlaces-derecha {
+ 
+   /* Evita que colapse en pantallas pequeñas */
+}
+.nav-item-1
+{
+ 
+  flex: 1; /* Permite que crezca y se mantenga proporcional */
+  min-width: 150px; /* Evita que se haga demasiado pequeño */
+  max-width: 6500px; /* Define un tamaño máximo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fa-sort-desc{
+  margin-left: 10px;
+}
+.nav-item-2
+{
+ 
+  flex: 1; /* Permite que crezca y se mantenga proporcional */
+  min-width: 150px; /* Evita que se haga demasiado pequeño */
+  max-width: 6500px; /* Define un tamaño máximo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-item-3{
+  flex: 1; /* Permite que crezca y se mantenga proporcional */
+  min-width: 100px; /* Evita que se haga demasiado pequeño */
+  max-width: 6500px; /* Define un tamaño máximo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

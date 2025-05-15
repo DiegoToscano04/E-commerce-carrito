@@ -1,0 +1,222 @@
+// projects/carrito/src/app/cart.service.ts
+import { Injectable, computed, signal, effect, inject } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Cart } from './models/cart.model'; // Frontend Cart model
+import { CartItem, CartItemRequest } from './models/cart-item.model'; // Frontend CartItem model y Request DTO
+
+// Interfaz para el item tal como viene del backend (antes del mapeo)
+interface BackendCartItem {
+  productId: string;
+  productName: string; // Difiere de nuestro 'name'
+  imageUrl: string;    // Difiere de nuestro 'image'
+  price: number;
+  quantity: number;
+}
+
+// Interfaz para el carrito tal como viene del backend
+interface BackendCart {
+  id: string;
+  items: BackendCartItem[];
+  total?: number; // El backend no lo envía actualmente por defecto, pero podría
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CartService {
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/v1/cart'; // URL de tu backend Spring Boot
+  private cartIdKey = 'uisShopCartId_v1'; // Clave para localStorage (añade versión por si cambias la estructura)
+
+  // --- Signals para el estado del carrito ---
+  private cartState = signal<Cart | null>(null); // Estado completo del carrito (mapeado)
+  isLoading = signal<boolean>(false);
+  error = signal<string | null>(null);
+
+  // --- Signals computados para fácil acceso desde componentes ---
+  // Estos ya los tenías, ¡genial! Solo los adaptamos para usar cartState
+  public cartItems = computed<CartItem[]>(() => this.cartState()?.items || []);
+  public totalItems = computed<number>(() =>
+    this.cartItems().reduce((sum, item) => sum + item.quantity, 0)
+  );
+  public totalPrice = computed<number>(() =>
+    this.cartItems().reduce((sum, item) => sum + item.price * item.quantity, 0)
+  );
+  public isEmpty = computed<boolean>(() => this.totalItems() === 0);
+
+
+  constructor() {
+    this.loadCartFromServer(); // Cargar el carrito al iniciar el servicio
+
+    // Opcional: Efecto para depuración o reaccionar a cambios en el carrito
+    // effect(() => {
+    //   console.log('Cart state changed:', this.cartState());
+    // });
+  }
+
+  // --- Gestión del cartId ---
+  private getCartId(): string {
+    if (typeof localStorage === 'undefined') {
+      // Manejo para SSR o entornos sin localStorage (podría devolver un ID temporal o error)
+      // Por ahora, para simplificar, asumimos que localStorage está disponible en el cliente
+      // O generamos uno que no se persistirá si estamos en el servidor
+      console.warn('localStorage no disponible. Generando cartId temporal.');
+      return crypto.randomUUID(); // Necesitarás polyfill o alternativa si apuntas a navegadores muy viejos
+    }
+
+    let cartId = localStorage.getItem(this.cartIdKey);
+    if (!cartId) {
+      cartId = crypto.randomUUID(); // Genera un UUID
+      localStorage.setItem(this.cartIdKey, cartId);
+    }
+    return cartId;
+  }
+
+  // --- Mapeo de datos Backend -> Frontend ---
+  private mapBackendCartItemToFrontend(backendItem: BackendCartItem): CartItem {
+    return {
+      productId: backendItem.productId,
+      name: backendItem.productName, // Mapeo
+      image: backendItem.imageUrl,   // Mapeo
+      price: backendItem.price,
+      quantity: backendItem.quantity,
+      // color y size no vienen del backend actual, se podrían manejar si se añaden
+    };
+  }
+
+  private mapBackendCartToFrontend(backendCart: BackendCart): Cart {
+    return {
+      id: backendCart.id,
+      items: backendCart.items.map(this.mapBackendCartItemToFrontend),
+    };
+  }
+
+  // --- Métodos para interactuar con el Backend ---
+
+  public async loadCartFromServer(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    const currentCartId = this.getCartId();
+    try {
+      const backendCart = await this.http.get<BackendCart>(`${this.apiUrl}/${currentCartId}`).toPromise();
+      if (backendCart) {
+        this.cartState.set(this.mapBackendCartToFrontend(backendCart));
+      } else {
+        // Si el backend devuelve null o undefined (aunque no debería con orElse(new Cart(cartId)))
+        this.cartState.set({ id: currentCartId, items: [] });
+      }
+    } catch (err) {
+      this.handleHttpError(err, 'Error al cargar el carrito');
+      // Incluso si hay error, podríamos inicializar un carrito local vacío
+      this.cartState.set({ id: currentCartId, items: [] });
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  public async addItem(itemRequest: CartItemRequest): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    const currentCartId = this.getCartId();
+    try {
+      const backendCart = await this.http.post<BackendCart>(`${this.apiUrl}/${currentCartId}/items`, itemRequest).toPromise();
+      if (backendCart) {
+        this.cartState.set(this.mapBackendCartToFrontend(backendCart));
+      }
+    } catch (err) {
+      this.handleHttpError(err, 'Error al añadir el producto al carrito');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  public async updateItemQuantity(productId: string, newQuantity: number): Promise<void> {
+    if (newQuantity <= 0) { // Si la cantidad es 0 o menos, eliminamos el item
+      await this.removeItem(productId);
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.error.set(null);
+    const currentCartId = this.getCartId();
+    try {
+      const backendCart = await this.http.put<BackendCart>(`${this.apiUrl}/${currentCartId}/items/${productId}`, { quantity: newQuantity }).toPromise();
+      if (backendCart) {
+        this.cartState.set(this.mapBackendCartToFrontend(backendCart));
+      }
+    } catch (err) {
+      this.handleHttpError(err, 'Error al actualizar la cantidad del producto');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  public async removeItem(productId: string): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    const currentCartId = this.getCartId();
+    try {
+      const backendCart = await this.http.delete<BackendCart>(`${this.apiUrl}/${currentCartId}/items/${productId}`).toPromise();
+      if (backendCart) {
+        this.cartState.set(this.mapBackendCartToFrontend(backendCart));
+      }
+    } catch (err) {
+      this.handleHttpError(err, 'Error al eliminar el producto del carrito');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  public async clearCart(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    const currentCartId = this.getCartId();
+    try {
+      const backendCart = await this.http.delete<BackendCart>(`${this.apiUrl}/${currentCartId}`).toPromise();
+      if (backendCart) {
+        this.cartState.set(this.mapBackendCartToFrontend(backendCart));
+      }
+    } catch (err) {
+      this.handleHttpError(err, 'Error al vaciar el carrito');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  // --- Métodos de conveniencia (usados por cart-list.component) ---
+  // Estos métodos ahora llaman a updateItemQuantity
+
+  public incrementQuantity(productId: string): void {
+    const item = this.cartItems().find(i => i.productId === productId);
+    if (item) {
+      this.updateItemQuantity(productId, item.quantity + 1);
+    }
+  }
+
+  public decrementQuantity(productId: string): void {
+    const item = this.cartItems().find(i => i.productId === productId);
+    if (item && item.quantity > 1) { // La lógica de no bajar de 1 antes de llamar al backend
+      this.updateItemQuantity(productId, item.quantity - 1);
+    } else if (item && item.quantity === 1) {
+      // Si la cantidad es 1 y se decrementa, se elimina el producto
+      this.removeItem(productId);
+    }
+  }
+
+
+  // --- Manejo de errores HTTP ---
+  private handleHttpError(error: any, defaultMessage: string): void {
+    let errorMessage = defaultMessage;
+    if (error instanceof HttpErrorResponse) {
+      // El backend puede devolver un mensaje de error más específico
+      if (error.error && typeof error.error.message === 'string') {
+        errorMessage = error.error.message;
+      } else if (typeof error.message === 'string') {
+        errorMessage = error.message;
+      }
+    }
+    console.error(error); // Loguear el error completo para depuración
+    this.error.set(errorMessage);
+    this.isLoading.set(false); // Asegurarse de que isLoading se resetee en error
+  }
+}

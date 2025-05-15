@@ -1,0 +1,181 @@
+// cart-list.component.scss (Reemplazar contenido anterior)
+
+:host { // Aplica al componente en sí
+  display: block; // Asegura que tome espacio
+  width: 100%;
+}
+
+.cart-list-container {
+  width: 100%;
+  font-family: poppins, sans-serif; // O la fuente que uses
+}
+
+// Estilos para las Cabeceras
+.cart-list-headers {
+  display: flex;
+  padding: 0.75rem 1rem; // Ajusta padding
+  border-bottom: 2px solid #ffffff;
+  color: #555;
+  font-weight: 600;
+  font-size: 0.9rem;
+ 
+  background-color: #ffffff; // Un fondo ligero para las cabeceras
+  border-radius: 5px 5px 0 0; // Bordes redondeados arriba
+
+  // Definir anchos relativos para las columnas (ajustar según necesidad)
+  .header-product { flex: 0.9; text-align: center; } // Más ancho
+  .header-price { flex: 1.3; text-align: right; }
+  .header-quantity { flex: 0.7;text-align: center;margin-left: 50px; }
+  .header-subtotal { flex: 0.9; text-align: center; }
+  .header-remove { flex: 0 0 50px; } // Ancho fijo pequeño
+}
+
+// Área que contiene todos los items
+.cart-items-area {
+   border: 1px solid #ffffff; // Borde alrededor de los items
+   border-top: none; // Ya tenemos borde en cabecera
+   border-radius: 0 0 5px 5px; // Bordes redondeados abajo
+}
+
+// Estilos para cada Fila de Producto
+.cart-item-row {
+  display: flex;
+  align-items: center; // Alinear verticalmente al centro
+  padding: 1rem;
+  border-bottom: 1px solid #e7e7e7; // Línea divisoria
+
+  &:last-child {
+    border-bottom: none; // Sin borde en el último ítem
+  }
+
+  .item-col {
+    padding: 0 1rem; // Espaciado interno
+  }
+
+  // Aplicar los mismos flex basis que las cabeceras para alinear
+  .item-product { flex: 3; display: flex; align-items: center; gap: 1rem; }
+  .item-price { flex: 1; text-align: right; font-weight: 500; }
+  .item-quantity { flex: 1; display: flex; justify-content: center; } // Centrar controles
+  .item-subtotal { flex: 1; text-align: right; font-weight: 600;min-width: 130px; // <--- ¡CLAVE! Ajusta este valor según necesites
+    padding-left: 20px;padding-right: 10px; }
+  .item-remove { flex: 0 0 50px; display: flex; justify-content: right; }
+}
+
+// Estilos específicos dentro de las columnas
+.item-image {
+  width: 60px; // Más pequeño que antes
+  height: 60px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.item-info {
+  .item-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: #003F62;
+  }
+  .item-detail {
+    font-size: 0.8rem;
+    color: #666;
+  }
+}
+
+// Estilos para controles de cantidad (parecidos al diseño)
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden; // Para que los botones encajen bien
+
+  button {
+    background-color: #f0f0f0;
+    border: none;
+    // border-right: 1px solid #ccc; // Línea entre botones
+    // border-left: 1px solid #ccc;
+    padding: 0.4rem 0.8rem; // Ajustar tamaño
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1; // Alinear mejor el texto del botón
+    color: #333;
+
+    &:hover:not(:disabled) {
+      background-color: #b3b3b3;
+    }
+    &:disabled {
+      color: #aaa;
+      cursor: not-allowed;
+      background-color: #f9f9f9;
+    }
+  }
+
+  span {
+    padding: 0.2rem 1rem; // Espacio para el número
+    font-weight: 600;
+    font-size: 0.95rem;
+    min-width: 30px; // Ancho mínimo para el número
+    text-align: center;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+
+  }
+}
+
+// Estilo para el botón de eliminar (icono)
+.remove-button {
+  background: none;
+  border: 1px solid #ccc; // Borde circular
+  color: #888;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%; // Hacerlo circular
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem; // Tamaño de la 'x'
+  line-height: 1;
+  padding: 0;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+
+  &:hover {
+    background-color: #fceeee;
+    color: #dc3545; // Rojo al pasar el ratón
+    border-color: #f5c6cb;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px; // O el espacio que necesites
+  // Para evitar saltos, puedes darle una altura fija si es un bloque
+  // min-height: 60px; // Ajusta según el tamaño del spinner y padding
+}
+
+.loading-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1); // Gris claro para el rastro
+  border-left-color: #007bff; // Color del spinner (ej. azul)
+  border-radius: 50%;
+  width: 30px; // Tamaño del spinner
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message{
+  text-align: center; 
+  padding: 10px; 
+  margin-top:15px; 
+  color: red; 
+  border: 1px solid red;
+}

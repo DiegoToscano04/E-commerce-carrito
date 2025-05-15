@@ -1,0 +1,119 @@
+// cart-summary.component.scss (REFINADO)
+// cart-summary.component.scss (AJUSTADO PARA ANCHO MEDIO)
+
+.summary-container {
+  width: 100%;
+  max-width: 310px; // <--- REDUCIDO (Prueba con 300px o 310px)
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+  padding: 20px; // <--- Mantenemos padding generoso por ahora (o reducir a 18px/16px si se ve apretado)
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  font-family: poppins, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+.summary-header {
+  background-color: #FFBE0A;
+  padding: 12px 20px; // Mantenemos padding
+  font-weight: 600;
+  text-align: center;
+  font-size: 1.1rem;
+  border-radius: 4px 4px 0 0;
+  // Asegúrate que el margen negativo coincida con el padding del container
+  margin: -20px -20px 20px -20px; // <--- Coincide con padding: 20px
+  // Si cambias padding a 16px, usa: margin: -16px -16px 16px -16px;
+}
+
+// Estilo base para las filas de contenido (Productos, Cupón, Total)
+.content-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px; // Espacio uniforme entre filas
+  font-size: 0.95rem;
+  // Quitamos márgenes laterales, el padding del container se encarga
+}
+
+// Heredamos estilos base para cada fila específica
+.product-row {
+  @extend .content-row; // Hereda flex, margin-bottom, etc.
+  font-weight: 500;
+  color: #333;
+  margin-top: 25px;
+  .highlight-text { // Estilo específico para "Productos (x)"
+    font-weight: 600; // Más negrita
+    // font-size: 0.9rem; // Mantenemos tamaño o ajustamos
+  }
+}
+
+.coupon-section {
+  @extend .content-row; // Hereda flex, etc.
+  background-color: #f8f8f8; // Fondo ligeramente gris
+  border: 1px solid #e0e0e0; // Borde más visible
+  padding: 10px 15px; // Padding interno
+  border-radius: 25px; // Mantenemos borde redondo
+  margin-bottom: 25px; // Aseguramos margen inferior
+}
+
+.coupon-text {
+  color: #555; // Un poco más oscuro
+  font-size: 0.9rem;
+}
+
+.apply-text {
+  color: #007185; // Mantenemos color
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.total-section {
+  @extend .content-row; // Hereda flex, etc.
+  font-size: 1.05rem; // Ligeramente más grande para el total
+  font-weight: 700; // Más negrita para el total
+  color: #111; // Negro
+}
+
+// Separador más visible y ancho completo
+.divider{
+  border: none;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  // Usamos un color más visible y consistente con los bordes
+  border-top: 1px solid #4e4e4e;
+  // Ocupa todo el ancho disponible dentro del padding
+  width: 100%;
+  // Ajustamos margen vertical
+  margin: 0 0 15px 0; // Margen solo abajo, antes de la siguiente fila
+}
+
+
+// Ya no necesitamos .divider.short, lo hemos integrado en .divider
+// .divider.short { ... } // ELIMINAR
+
+.checkout-button-container {
+  margin-top: auto; // Empuja el botón hacia abajo si hay espacio extra
+  padding-top: 10px; // Espacio sobre el botón
+}
+
+
+.checkout-button {
+  width: 100%;
+  background-color: #ffdd40; // Mismo amarillo que la cabecera
+  color: #111; // Texto negro
+  font-weight: 700; // Negrita fuerte
+  padding: 14px; // Un poco más de padding
+  border: none;
+  border-radius: 25px; // Mantenemos borde redondo
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 1rem;
+  text-align: center; // Asegurar centrado
+
+  &:hover {
+    background-color: #ffcd00; // Un amarillo ligeramente más oscuro al pasar el ratón
+  }
+}

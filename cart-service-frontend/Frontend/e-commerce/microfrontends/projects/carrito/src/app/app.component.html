@@ -1,0 +1,35 @@
+<!-- Vista de Carrito Vacío: se muestra si cartService.isEmpty() es true -->
+<app-cart-empty *ngIf="cartService.isEmpty()"></app-cart-empty>
+
+<!-- Contenedor Principal del Carrito: se muestra si cartService.isEmpty() es false -->
+<div class="cart-container" *ngIf="!cartService.isEmpty()">
+  <div class="cart">
+
+    <!-- Columna Izquierda: Lista + Botones -->
+    <div class="cart-left-column">
+      <!-- La app-cart-list ahora contiene sus propias cabeceras y la lógica de carga/error -->
+      <app-cart-list></app-cart-list>
+
+      <!-- Botones de Acción Inferiores -->
+      <div class="cart-actions">
+        <!-- routerLink para "Continuar Comprando", asegúrate que la ruta es correcta para tu Shell -->
+        <button class="btn btn-continue" routerLink="/">Continuar Comprando</button>
+        <!-- El botón "Vaciar Carro" ahora llama a un método en el componente para confirmación -->
+        <button class="btn btn-clear" (click)="handleClearCart()">Vaciar Carro</button>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Resumen -->
+    <div class="cart-right-column">
+       <app-cart-summary></app-cart-summary>
+    </div>
+
+  </div>
+</div>
+
+<!-- Botón de prueba (opcional, puedes quitarlo después de probar) -->
+<div style="margin-top: 20px; text-align: center;">
+  <button (click)="addTestItem()" style="padding: 10px 20px; font-size: 16px;">Añadir Item de Prueba al Carrito</button>
+  <div *ngIf="cartService.isLoading()" style="margin-top: 10px;">Procesando...</div>
+  <div *ngIf="cartService.error()" style="margin-top: 10px; color: red;">Error: {{ cartService.error() }}</div>
+</div>

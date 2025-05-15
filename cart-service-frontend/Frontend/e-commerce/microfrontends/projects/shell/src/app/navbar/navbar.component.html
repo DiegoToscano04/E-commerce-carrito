@@ -1,0 +1,57 @@
+
+
+  <nav>
+    <div class="left uis ">
+      <a href="#"><img src="../../assets/images/Logo.png" alt="logo" class="logo" /></a>
+    </div>
+    <div class="searchBox">
+      <form class="box">
+        <div class="dflex">
+            <select class="search-category">
+              <option selected>Todas las categorías</option>
+              <option value="tecnologia">Tecnología</option>
+              <option value="moda">Moda</option>
+              <option value="electrodomesticos">Electrodomésticos</option>
+            </select>
+          <input type="text"class="search-input" placeholder="Buscar productos..." aria-label="Buscar"> 
+          <button type="submit" class="search">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+    </form>
+    </div>
+    <div class="enlaces-derecha right dflex">
+        <div class="nav-item-1">
+            <a class="nav-link" href="#">
+              <i class="fa-regular fa-user"></i>
+                <div class="item-1">
+                    <span>Bienvenido, Ingresa</span>
+                    <span class="account">Cuenta<i class="fa fa-sort-desc"></i></span>
+                </div>
+            </a>
+        </div>
+        <div class="nav-item-2">
+        <a class="nav-link" href="#">
+            <!-- Ícono de camión a la izquierda del texto -->
+            <img class="truck-icon" src="../../assets/images/carro_envio.png" alt="Camión" >
+            <div>
+                <span>Devoluciones</span>
+                <span class="bold">y Pedidos</span>
+            </div>
+        </a>
+    </div>
+    <div class="nav-item-3">
+        <a class="nav-link" routerLink="/carrito-app">
+            <!-- Ícono personalizado del carrito -->
+            <div class="cart-icon-container">
+                <img src="../../assets/images/cart-image.png" alt="Carrito" class="cart-icon">
+                <!-- Contenedor para el número de productos en el carrito -->
+                <span id="cart-count" class="cart-count">0</span>
+            </div>
+            <span  class="carrito-text">Carrito</span>
+        </a>
+    </div>
+    </div>
+  </nav>
+ 
+ 

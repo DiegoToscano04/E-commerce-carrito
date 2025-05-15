@@ -1,0 +1,93 @@
+$background-main: #2f2f2f;
+$background-bottom: #161616;
+$background-top: #22797E;
+$text-color: #fff;
+$title-color: #00bcd4;
+
+.footer {
+ 
+  color: $text-color;
+  font-family: 'Century Gothic', sans-serif;
+  width: 100%;
+  display: block;
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 2rem;
+    background-color: $background-main;
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: $text-color;
+      align-items: flex-end;
+      display: flex;
+      margin-left: 160px;
+      padding: 10px;
+    
+      
+       
+      
+
+      .logo-bold {
+        font-size: 3rem;
+        color: $text-color;
+      }
+    }
+
+    .sections {
+    margin-top: 20px;
+      display: flex;
+      gap: 4rem;
+      margin-right: 310px;
+      font-size: 12px;
+    
+
+      div {
+        h4 {
+          color: #00CAD7;
+          margin-bottom: 1.5rem;
+          font-size: 1.2rem;
+          
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            margin-bottom: 0.3rem;
+          }
+        }
+      }
+    }
+
+    .payments {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      justify-content: flex-end;
+      margin-right: 310px; 
+      margin-top: 20px;
+    
+    }
+  }
+
+  .footer-bottom {
+    text-align: center;
+    padding: 1rem;
+    background-color: $background-bottom;
+    font-size: 0.9rem;
+  }
+}
+.footer-top{
+    display: flex;
+    text-align: center;
+    padding: 1rem;
+    background-color: $background-top;
+    height: 40px;
+  
+}

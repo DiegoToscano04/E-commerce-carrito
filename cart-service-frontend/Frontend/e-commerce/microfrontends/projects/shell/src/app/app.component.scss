@@ -1,0 +1,42 @@
+
+.principal {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+
+}
+
+
+
+  .main-content {
+    width: 100%;
+    max-width: 6500px;
+    min-width: 1480px;  // Ajustar el tamaño mínimo
+   // Centra el contenido
+  }
+  
+  
+  
+  // Contenido principal flexible
+  .main-content {
+    flex-grow: 1;
+    width: 100%;
+  }
+  
+  // Media queries para pantallas más pequeñas
+  @media (max-width: 1200px) {
+    .nav-superior,
+    .nav-inferior,
+    .main-content {
+      width: 100%;
+   
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .nav-superior,
+    .nav-inferior {
+      flex-direction: column; // Cambia el layout para pantallas más pequeñas
+    }
+  }
+  

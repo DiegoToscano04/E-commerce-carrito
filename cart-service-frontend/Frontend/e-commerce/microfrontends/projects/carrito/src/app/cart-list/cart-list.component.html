@@ -1,0 +1,65 @@
+<!-- projects/carrito/src/app/cart-list/cart-list.component.html (CORREGIDO) -->
+<div class="cart-list-container">
+  <!-- Cabeceras -->
+  <div class="cart-list-headers">
+    <div class="header-product">Producto</div>
+    <div class="header-price">Precio</div>
+    <div class="header-quantity">Cantidad</div>
+    <div class="header-subtotal">Subtotal</div>
+    <div class="header-remove"></div>
+  </div>
+
+  <!-- Lista de Items -->
+  <div class="cart-items-area">
+    <!-- Iteramos sobre el signal del servicio -->
+    <div *ngFor="let item of cartService.cartItems(); trackBy: trackByProductId" class="cart-item-row">
+
+      <!-- Columna Producto -->
+      <div class="item-col item-product">
+        <img [src]="item.image" alt="{{ item.name }}" class="item-image" />
+        <div class="item-info">
+          <div class="item-name">{{ item.name }}</div>
+          <div *ngIf="item.color" class="item-detail">Color: {{ item.color }}</div>
+          <div *ngIf="item.size" class="item-detail">Tamaño: {{ item.size }}</div>
+        </div>
+      </div>
+
+      <!-- Columna Precio Unitario -->
+      <div class="item-col item-price">
+        {{ item.price | currency:'COP':'symbol':'1.0-0' }}
+      </div>
+
+      <!-- Columna Cantidad -->
+      <div class="item-col item-quantity">
+        <div class="quantity-controls">
+          <button (click)="decrement(item)" [disabled]="item.quantity <= 1 && cartService.cartItems().length === 1 && cartService.cartItems()[0].quantity ===1">-</button>
+          <span>{{ item.quantity }}</span>
+          <button (click)="increment(item)">+</button>
+        </div>
+      </div>
+      
+      <!-- Columna Subtotal -->
+      <div class="item-col item-subtotal">
+        {{ (item.price * item.quantity) | currency:'COP':'symbol':'1.0-0' }}
+      </div>
+
+      <!-- Columna Eliminar -->
+      <div class="item-col item-remove">
+        <button (click)="remove(item)" class="remove-button" aria-label="Eliminar ítem">
+          ×
+        </button>
+      </div>
+
+    </div> <!-- FIN DEL *ngFor -->
+  </div> <!-- FIN DE cart-items-area -->
+
+  <!-- Mensaje de carga y error (AHORA FUERA DEL *ngFor y del cart-items-area) -->
+  <!-- Puedes colocarlo directamente bajo cart-items-area o incluso al final del cart-list-container -->
+  <div *ngIf="cartService.isLoading()" class="spinner-container">
+  <div class="loading-spinner"></div>
+  </div>
+  <div *ngIf="cartService.error() && !cartService.isLoading()" class="error-message">
+    Error: {{ cartService.error() }}
+  </div>
+
+</div> <!-- FIN DE cart-list-container -->

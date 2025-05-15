@@ -1,0 +1,35 @@
+<!-- src/app/cart-summary/cart-summary.component.html (AJUSTADO) -->
+<div class="summary-container">
+  <div class="summary-header">
+    Total Carrito
+  </div>
+
+  <div class="product-row">
+      <span class="highlight-text">Productos ({{ cartService.totalItems() }})</span>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="coupon-section">
+    <span class="coupon-text">Cupón de Descuento</span>
+    <!-- TODO: Lógica para aplicar cupón -->
+    <button class="apply-text" (click)="applyCoupon()">Aplicar</button>
+  </div>
+
+  <hr class="divider" />
+
+  <div class="total-section">
+    <span>Total</span>
+    <span>{{ cartService.totalPrice() | currency:'COP':'symbol':'1.0-0' }}</span>
+  </div>
+
+  <div class="checkout-button-container">
+      <!-- TODO: Implementar acción de checkout, deshabilitar si está cargando o hay error -->
+      <button class="checkout-button" (click)="proceedToCheckout()" [disabled]="cartService.isLoading() || cartService.isEmpty()">
+        Proceder al Pago
+      </button>
+  </div>
+
+  <!-- Opcional: Indicador de carga específico para el resumen si las acciones aquí pueden tardar -->
+  <!-- <div *ngIf="cartService.isLoading()" class="loading-indicator-summary">Actualizando...</div> -->
+</div>
