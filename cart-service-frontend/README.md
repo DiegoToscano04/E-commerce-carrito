@@ -10,7 +10,7 @@
 
 Descargar la versión de node.js  ```20.12.1``` : https://nodejs.org/es/blog/release/v20.12.1
 
-Instalar el CLI de Angular para la versión 17.3.3:  ```npm install -g @angular/cli@17.3.3```
+Instalar el CLI de Angular para la versión ```17.3.3``` :  ```npm install -g @angular/cli@17.3.3```
 
 Corroborar la versión con: ```ng version```
 
