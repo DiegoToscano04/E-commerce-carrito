@@ -219,4 +219,55 @@ export class CartService {
     this.error.set(errorMessage);
     this.isLoading.set(false); // Asegurarse de que isLoading se resetee en error
   }
+
+  public async initiateCheckout(): Promise<boolean> { // Devuelve true si la llamada fue exitosa (2xx)
+    if (this.isEmpty()) {
+      console.warn('Intento de checkout con carrito vacío desde el frontend.');
+      this.error.set('No puedes proceder al pago con un carrito vacío.');
+      return false;
+    }
+
+    this.isLoading.set(true);
+    this.error.set(null);
+    const currentCartId = this.getCartId();
+
+    try {
+      // La llamada al backend es un POST al endpoint /{cartId}/checkout
+      // No esperamos un cuerpo de respuesta significativo, solo un código de estado.
+      // Usamos { observe: 'response' } para obtener la respuesta completa y verificar el estado.
+      const response = await this.http.post<void>(`${this.apiUrl}/${currentCartId}/checkout`, null, { observe: 'response' }).toPromise();
+
+      if (response && response.status >= 200 && response.status < 300) {
+        console.log('Checkout iniciado exitosamente en el backend para cartId:', currentCartId);
+        this.isLoading.set(false);
+
+        // DECISIÓN IMPORTANTE: ¿Qué hacer con el carrito en el frontend después de un checkout exitoso?
+        // Opción 1: Vaciarlo inmediatamente.
+        // this.cartState.set({ id: currentCartId, items: [] });
+        // localStorage.removeItem(this.cartIdKey); // Opcional: forzar la creación de un nuevo cartId la próxima vez
+        // console.log('Carrito local vaciado y cartId de localStorage eliminado después del checkout.');
+
+        // Opción 2: Dejarlo como está y que el servicio de Órdenes/Pagos
+        // eventualmente confirme y luego se gestione la limpieza del carrito
+        // (quizás a través de otro evento o una acción del usuario).
+        // Esta es a menudo preferible para que el usuario aún vea su carrito
+        // mientras se procesa el pago, o si el pago falla, el carrito sigue ahí.
+
+        // Por ahora, adoptaremos la Opción 2 (no hacer nada inmediato con el estado local del carrito)
+        // solo nos aseguramos de que isLoading se apague.
+        // El backend podría, en un futuro, devolver el carrito actualizado (quizás vacío)
+        // y podríamos usar esa respuesta para actualizar this.cartState.set(...).
+
+        return true;
+      } else {
+        // Esto no debería ocurrir si el backend devuelve 200 o un error HTTP que catch maneja
+        this.handleHttpError(response, 'Respuesta inesperada del servidor durante el checkout.');
+        return false;
+      }
+    } catch (err) {
+      this.handleHttpError(err, 'Error al iniciar el proceso de checkout.');
+      return false;
+    }
+    // finally no es necesario aquí porque isLoading se maneja en try/catch
+}
 }

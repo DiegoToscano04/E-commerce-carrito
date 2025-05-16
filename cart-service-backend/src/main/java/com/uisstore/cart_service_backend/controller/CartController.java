@@ -8,6 +8,7 @@ import com.uisstore.cart_service_backend.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/v1/cart") // Ruta base para el carrito
@@ -55,5 +56,18 @@ public class CartController {
     @DeleteMapping("/{cartId}")
     public ResponseEntity<Cart> clearCart(@PathVariable String cartId) {
         return ResponseEntity.ok(cartService.clearCart(cartId));
+    }
+
+    // endpoint para iniciar el checkout
+
+    @PostMapping("/{cartId}/checkout")
+    public ResponseEntity<Void> checkout(@PathVariable String cartId){
+        boolean success = cartService.initiateCheckout(cartId);
+        if (success) {
+            // Si el evento se publicó (o al menos se intentó sin error inmediato grave)
+            return ResponseEntity.ok().build();// 200 OK
+        }else {// Podría ser si el carrito está vacío, por ejemplo.
+            return ResponseEntity.badRequest().build(); // 400 Bad Request
+        }
     }
 }
