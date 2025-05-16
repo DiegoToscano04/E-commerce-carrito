@@ -1,21 +1,16 @@
-<<<<<<< HEAD
 <h1 align="center"> Proyecto Ingeniería de Software 2 - E-commerce </h1>
-<h2 align="center"> Frontend Angular con Microfrontend y Module Federation para el Microservicio "Carrito"</h2>
-
-<p align="center"> <img src= "https://github.com/user-attachments/assets/5bbe787f-e78e-4aa9-810c-ace22999cb20" width="550" height="500"> </p>
+<h2 align="center"> Implementar RabbitMQ como Bus de Mensajería para Manejar la Asincronía</h2>
 
 -----------------------------
-<h2 align="center"> Recomendación <mark>IMPORTANTE</mark> al Descargar el Proyecto</h2>
 
-## Configuración
-Como **_node_modules_** no se subió al repositorio para evitar incrementar el tamaño del mismo, es necesario instalar las dependencias, para eso siga estos pasos:
+### Instalar Docker
+Seguir los pasos necesarios para instalar Docker en el sistema operativo correspondiente, para el caso de Windows es necesario seguir los pasos enunciados en el siguiente link: https://docs.docker.com/desktop/setup/install/windows-install/
 
-### Instalar Dependencias
-Abrir la terminal y ubicarse en el proyecto: ```../Frontend/e-commerce/microfrontends``` y ejecutar: ```yarn install```, de esta manera se descargarán todas las dependencias necesarias.
+### Desplegar RabbitMQ
+Con el siguiente comando se despliega RabbitMQ como un contenedor: ```docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management```
 
-**Nota Importante: No utilizar** ```npm install``` para no sobreescribir el archivo ```package-lock.json```.
+Esto inicia RabbitMQ y expone:
 
-```yarn install``` lee el archivo ```yarn.lock``` para instalar las dependencias de forma rápida y confiable.
-=======
-# ProyectoEcommerceEnGrupo
->>>>>>> f35a55e072f57e7c587bb0b969cce7e87344e9e6
+Puerto ```5672:``` Para conexiones AMQP (el que usa Spring Boot).
+
+Puerto ```15672:``` Para la interfaz de administración web de RabbitMQ se accede por medio de: ```http://localhost:15672``` y las credenciales de acceso son: ```login: guest/guest```.
