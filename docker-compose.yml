@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Servicio de Carrito (tu aplicación Spring Boot)
+  cart-service:
+    build:
+      context: ./cart-service-backend # El contexto de construcción es el directorio actual (donde está el Dockerfile)
+      dockerfile: Dockerfile
+    container_name: uisstore-cart-service
+    ports:
+      - "8080:8080" # Mapea puerto 8080 del host al 8080 del contenedor
+    environment:
+      # Configuración para conectarse a Redis y RabbitMQ dentro de la red Docker
+      # Usaremos los nombres de servicio 'redis' y 'rabbitmq' como hosts
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_DATA_REDIS_PASSWORD=Redis123 # ¡Contraseña para Redis!
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      # Podrías añadir otros perfiles o configuraciones aquí si es necesario
+      # - SPRING_PROFILES_ACTIVE=docker 
+    depends_on: # Asegura que Redis y RabbitMQ inicien antes que cart-service
+      - redis
+      - rabbitmq
+    networks:
+      - uisstore-network
+
+  # Servicio Redis
+  redis:
+    image: redis:7-alpine # Usamos una imagen Alpine más ligera
+    container_name: uisstore-redis
+    ports:
+      - "6379:6379" # Exponer al host para depuración opcional, no estrictamente necesario si solo acceden otros contenedores
+    command: redis-server --requirepass Redis123 # Establecer contraseña para Redis
+    volumes:
+      - redis_data:/data # Persistencia para los datos de Redis
+    networks:
+      - uisstore-network
+
+  # Servicio RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine # Imagen con interfaz de administración
+    container_name: uisstore-rabbitmq
+    ports:
+      - "5672:5672"  # Puerto AMQP
+      - "15672:15672" # Puerto para la interfaz de administración web
+    environment:
+      # RabbitMQ usa estas variables para el usuario/contraseña por defecto si se crean al inicio
+      # Si no se especifican, usa guest/guest. Para consistencia, podemos definirlas.
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # Persistencia para los datos de RabbitMQ
+    networks:
+      - uisstore-network
+
+# Definición de Volúmenes (para persistencia)
+volumes:
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+# Definición de la Red (para que los contenedores se comuniquen)
+networks:
+  uisstore-network:
+    driver: bridge
