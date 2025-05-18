@@ -4,24 +4,22 @@ services:
   # Servicio de Carrito (tu aplicación Spring Boot)
   cart-service:
     build:
-      context: ./cart-service-backend # El contexto de construcción es el directorio actual (donde está el Dockerfile)
+      context: ./cart-service-backend
       dockerfile: Dockerfile
     container_name: uisstore-cart-service
-    ports:
-      - "8080:8080" # Mapea puerto 8080 del host al 8080 del contenedor
+    # No exponemos el puerto 8080 directamente al host ahora, Kong lo hará.
+
     environment:
-      # Configuración para conectarse a Redis y RabbitMQ dentro de la red Docker
-      # Usaremos los nombres de servicio 'redis' y 'rabbitmq' como hosts
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
-      - SPRING_DATA_REDIS_PASSWORD=Redis123 # ¡Contraseña para Redis!
+      - SPRING_DATA_REDIS_PASSWORD=Redis123
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_PORT=5672
       - SPRING_RABBITMQ_USERNAME=guest
       - SPRING_RABBITMQ_PASSWORD=guest
-      # Podrías añadir otros perfiles o configuraciones aquí si es necesario
-      # - SPRING_PROFILES_ACTIVE=docker 
-    depends_on: # Asegura que Redis y RabbitMQ inicien antes que cart-service
+      # Es buena práctica definir el puerto en el que corre la app, aunque sea el por defecto
+      - SERVER_PORT=8080 
+    depends_on:
       - redis
       - rabbitmq
     networks:
@@ -29,41 +27,114 @@ services:
 
   # Servicio Redis
   redis:
-    image: redis:7-alpine # Usamos una imagen Alpine más ligera
+    image: redis:7-alpine
     container_name: uisstore-redis
-    ports:
-      - "6379:6379" # Exponer al host para depuración opcional, no estrictamente necesario si solo acceden otros contenedores
-    command: redis-server --requirepass Redis123 # Establecer contraseña para Redis
+    # No es necesario exponer el puerto de Redis al host si solo acceden otros contenedores.
+    
+    command: redis-server --requirepass Redis123
     volumes:
-      - redis_data:/data # Persistencia para los datos de Redis
+      - redis_data:/data
     networks:
       - uisstore-network
 
   # Servicio RabbitMQ
   rabbitmq:
-    image: rabbitmq:3-management-alpine # Imagen con interfaz de administración
+    image: rabbitmq:3-management-alpine
     container_name: uisstore-rabbitmq
     ports:
-      - "5672:5672"  # Puerto AMQP
-      - "15672:15672" # Puerto para la interfaz de administración web
-    environment:
-      # RabbitMQ usa estas variables para el usuario/contraseña por defecto si se crean al inicio
-      # Si no se especifican, usa guest/guest. Para consistencia, podemos definirlas.
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      # Solo exponemos el puerto de management si es necesario desde el host.
+      # El puerto AMQP 5672 no necesita estar expuesto al host si solo acceden otros contenedores.
+      - "15672:15672" # Management UI
+    # environment: # Ya los tiene por defecto guest/guest, para ser más explícito:
+    #   - RABBITMQ_DEFAULT_USER=guest
+    #   - RABBITMQ_DEFAULT_PASS=guest
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq # Persistencia para los datos de RabbitMQ
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - uisstore-network
 
-# Definición de Volúmenes (para persistencia)
+  # ----- NUEVOS SERVICIOS PARA KONG -----
+
+  # Base de Datos PostgreSQL para Kong
+  kong-db:
+    image: postgres:13-alpine # Usamos PostgreSQL 13 Alpine
+    container_name: uisstore-kong-db
+    environment:
+      - POSTGRES_USER=kong
+      - POSTGRES_PASSWORD=kongpass 
+      - POSTGRES_DB=kong_db
+    volumes:
+      - kong_postgres_data:/var/lib/postgresql/data
+    networks:
+      - uisstore-network
+    healthcheck: # Espera a que PostgreSQL esté listo
+      test: ["CMD", "pg_isready", "-U", "kong", "-d", "kong_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Migraciones de Kong (se ejecuta una vez y termina)
+  kong-migrations:
+    image: kong:latest # Usa la última imagen de Kong
+    container_name: uisstore-kong-migrations
+    environment:
+      - KONG_DATABASE=postgres
+      - KONG_PG_HOST=kong-db # Nombre del servicio de PostgreSQL
+      - KONG_PG_USER=kong
+      - KONG_PG_PASSWORD=kongpass # La misma contraseña que en kong-db
+      - KONG_PG_DATABASE=kong_db
+    command: "kong migrations bootstrap" # Ejecuta las migraciones
+    depends_on:
+      kong-db: # Depende de que la base de datos esté lista
+        condition: service_healthy # Espera el healthcheck de kong-db
+    networks:
+      - uisstore-network
+    restart: on-failure # Reintentar si falla la migración
+
+  # Servicio Kong API Gateway
+  kong:
+    image: kong:latest
+    container_name: uisstore-kong-gateway
+    environment:
+      - KONG_DATABASE=postgres
+      - KONG_PG_HOST=kong-db
+      - KONG_PG_USER=kong
+      - KONG_PG_PASSWORD=kongpass # La misma contraseña
+      - KONG_PG_DATABASE=kong_db
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout # Logs de acceso a stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout # Logs de admin a stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr  # Logs de error a stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001 # API de Admin escuchando en todas las interfaces
+      - KONG_ADMIN_GUI_URL=http://localhost:8002 # URL para Kong Manager (si usas Kong Gateway OSS with Kong Manager)
+      # - KONG_PLUGINS=bundled # Lista de plugins ( ej. jwt, key-auth)
+      # - KONG_TRUSTED_IPS=0.0.0.0/0,::/0 # Necesario si accedes a la API de Admin desde fuera de Docker sin un proxy inverso seguro
+    ports:
+      - "8088:8000"  # Puerto Proxy HTTP por donde entrarán las peticiones de los clientes
+      - "8443:8443"  # Puerto Proxy HTTPS (necesitarías configurar certificados)
+      - "8089:8001"  # Puerto para la API de Administración de Kong
+      
+    depends_on:
+      kong-migrations: # Depende de que las migraciones hayan terminado
+        condition: service_completed_successfully # Espera a que kong-migrations termine con éxito
+    networks:
+      - uisstore-network
+    healthcheck: # Comprueba si Kong está listo
+        test: ["CMD", "kong", "health"]
+        interval: 10s
+        timeout: 10s
+        retries: 10
+
+# ----- FIN DE NUEVOS SERVICIOS PARA KONG -----
+
 volumes:
   redis_data:
     driver: local
   rabbitmq_data:
     driver: local
+  kong_postgres_data: # Nuevo volumen para los datos de PostgreSQL de Kong
+    driver: local
 
-# Definición de la Red (para que los contenedores se comuniquen)
 networks:
   uisstore-network:
     driver: bridge
