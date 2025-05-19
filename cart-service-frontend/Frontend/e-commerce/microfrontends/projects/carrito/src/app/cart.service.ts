@@ -68,7 +68,8 @@ export class CartService {
 
     let cartId = localStorage.getItem(this.cartIdKey);
     if (!cartId) {
-      cartId = crypto.randomUUID(); // Genera un UUID
+      //cartId = crypto.randomUUID(); // Genera un UUID
+      cartId = uuidv4(); // <--- USAR uuidv4() EN LUGAR DE crypto.randomUUID()
       localStorage.setItem(this.cartIdKey, cartId);
     }
     return cartId;
