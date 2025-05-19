@@ -57,32 +57,6 @@ curl -i -X POST \
 EOF
 check_command
 
-# 3. Habilitar el Plugin CORS en la Route
-echo ""
-echo "Paso 3: Habilitando/Actualizando el plugin CORS para la Route '${ROUTE_NAME}'..."
-# Para hacer esto idempotente, podríamos intentar un PUT a /routes/{routeNameOrId}/plugins/{pluginId}
-# o DELETE y luego POST. Por simplicidad para un script inicial, un POST está bien,
-# aunque si lo ejecutas múltiples veces podría crear múltiples instancias del plugin si no se maneja.
-# Una mejor forma sería verificar si ya existe. Por ahora, lo dejamos como POST.
-RESPONSE=$(curl -s -i -X POST \
-  --url "${KONG_ADMIN_URL}/routes/${ROUTE_NAME}/plugins" \
-  --header 'Content-Type: application/json' \
-  --data @- << EOF
-{
-    "name": "cors",
-    "config": {
-        "origins": ["${FRONTEND_ORIGIN_URL}"],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "headers": ["Content-Type", "Authorization"],
-        "exposed_headers": ["Content-Length", "Content-Range"],
-        "credentials": true,
-        "max_age": 3600
-    }
-}
-EOF
-)
-check_command
-
 echo ""
 echo "--- Configuración de Kong completada exitosamente ---"
 echo "Tu servicio de carrito debería ser accesible a través de Kong en: http://${KONG_ADMIN_IP}:<KONG_PROXY_PORT>${ROUTE_PATH}/api/v1/cart/..."
