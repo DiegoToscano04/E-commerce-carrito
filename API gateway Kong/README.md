@@ -3,3 +3,11 @@
 
 
 -----------------------------
+
+### Dar Permisos de Ejecución al Script:
+
+```chmod +x configure-kong.sh```
+
+### Ejecutar el Script:
+
+```./configure-kong.sh``` 
