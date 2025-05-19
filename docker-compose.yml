@@ -125,6 +125,19 @@ services:
         timeout: 10s
         retries: 10
 
+  frontend-shell:
+    build:
+      # El contexto es la raíz de tu monorepo, donde está el package.json principal
+      context: ./cart-service-frontend/Frontend/e-commerce/microfrontends # donde está el package.json principal
+      dockerfile: ./projects/shell/Dockerfile # Ruta al Dockerfile del shell
+    container_name: uisstore-frontend-shell1
+    ports:
+      - "4200:80" # Mapea el puerto 80 (Nginx) del contenedor al 4200 de tu host
+    networks:
+      - uisstore-network
+    # depends_on: # Opcional, si el frontend necesita que Kong esté listo
+    #   - kong
+
 # ----- FIN DE NUEVOS SERVICIOS PARA KONG -----
 
 volumes:

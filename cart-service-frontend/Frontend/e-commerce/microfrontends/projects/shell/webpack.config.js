@@ -4,7 +4,7 @@ let config = withModuleFederationPlugin({
   name: 'shell',
   
   remotes: {
-    "carrito-mfe": "http://localhost:4300/remoteEntry.js",
+    "carrito-mfe": "http://localhost:4200/carrito-mfe/remoteEntry.js",
   },
  shared: share({ // MISMA shared ultra-mínima
   '@angular/core': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
