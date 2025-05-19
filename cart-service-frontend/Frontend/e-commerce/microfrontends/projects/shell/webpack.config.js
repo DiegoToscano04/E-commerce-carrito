@@ -3,10 +3,10 @@ const { share, withModuleFederationPlugin } = require('@angular-architects/modul
 let config = withModuleFederationPlugin({
   name: 'shell',
   
-  remotes: {
-    "carrito-mfe": "http://localhost:4200/carrito-mfe/remoteEntry.js",
-  },
- shared: share({ // MISMA shared ultra-mínima
+ remotes: {
+  "carrito-mfe": "http://10.6.101.125:4200/carrito-mfe/remoteEntry.js",
+},
+hared: share({ // MISMA shared ultra-mínima
   '@angular/core': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   '@angular/common': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   '@angular/router': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
