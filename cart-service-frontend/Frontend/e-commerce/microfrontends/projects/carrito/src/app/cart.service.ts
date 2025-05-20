@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Cart } from './models/cart.model'; // Frontend Cart model
 import { CartItem, CartItemRequest } from './models/cart-item.model'; // Frontend CartItem model y Request DTO
 
+
 // Interfaz para el item tal como viene del backend (antes del mapeo)
 interface BackendCartItem {
   productId: string;
@@ -56,23 +57,31 @@ export class CartService {
     // });
   }
 
-  // --- Gestión del cartId ---
   private getCartId(): string {
+    // Verificamos si el entorno tiene `localStorage` disponible
     if (typeof localStorage === 'undefined') {
-      // Manejo para SSR o entornos sin localStorage (podría devolver un ID temporal o error)
-      // Por ahora, para simplificar, asumimos que localStorage está disponible en el cliente
-      // O generamos uno que no se persistirá si estamos en el servidor
       console.warn('localStorage no disponible. Generando cartId temporal.');
-      return crypto.randomUUID(); // Necesitarás polyfill o alternativa si apuntas a navegadores muy viejos
+      return this.generateUUID(); // Fallback a una generación manual de UUID
     }
-
+  
+    // Verificamos si ya tenemos un cartId almacenado en localStorage
     let cartId = localStorage.getItem(this.cartIdKey);
     if (!cartId) {
-      cartId = crypto.randomUUID(); // Genera un UUID
-      
+      // Si no hay cartId, generamos uno nuevo
+      cartId = this.generateUUID(); // Fallback a una generación manual de UUID
       localStorage.setItem(this.cartIdKey, cartId);
     }
     return cartId;
+  }
+  
+  // Función de generación de UUID manual (fallback)
+  private generateUUID(): string {
+    // UUID versión 4 - formato de 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0,
+          v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 
   // --- Mapeo de datos Backend -> Frontend ---
