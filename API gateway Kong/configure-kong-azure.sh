@@ -33,7 +33,7 @@ echo "--- Configurando Kong API Gateway en ${KONG_ADMIN_URL} ---"
 # 1. Crear el Service en Kong
 echo ""
 echo "Paso 1: Creando el Service '${SERVICE_NAME}'..."
-curl -s -i -X POST \ # -s para modo silencioso (menos output de curl mismo)
+curl -s -i -X POST \ # - s para modo silencioso menos output de curl mismo
   --url "${KONG_ADMIN_URL}/services/" \
   --header 'Content-Type: application/json' \
   --data @- << EOF
