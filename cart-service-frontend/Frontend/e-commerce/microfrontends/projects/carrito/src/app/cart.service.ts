@@ -27,7 +27,8 @@ export class CartService {
   private http = inject(HttpClient);
   //private apiUrl = 'http://localhost:8080/api/v1/cart'; // URL de tu backend Spring Boot
   //private apiUrl = 'http://localhost:8088/cart-api/api/v1/cart'; // NUEVA URL a través de Kong
-  private apiUrl = 'http://10.6.101.125:8088/cart-api/api/v1/cart';// Kong con la ip del server de la U.
+  //private apiUrl = 'http://10.6.101.125:8088/cart-api/api/v1/cart';// Kong con la ip del server de la U.
+  private apiUrl = 'http://172.174.245.137:8088/cart-api/api/v1/cart';// Kong con la ip del server de la U.
   private cartIdKey = 'uisShopCartId_v1'; // Clave para localStorage (añade versión por si cambias la estructura)
 
   // --- Signals para el estado del carrito ---
