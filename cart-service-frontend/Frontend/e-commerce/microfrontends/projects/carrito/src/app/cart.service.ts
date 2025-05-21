@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Cart } from './models/cart.model'; // Frontend Cart model
 import { CartItem, CartItemRequest } from './models/cart-item.model'; // Frontend CartItem model y Request DTO
 
+
 // Interfaz para el item tal como viene del backend (antes del mapeo)
 interface BackendCartItem {
   productId: string;
