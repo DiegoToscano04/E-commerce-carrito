@@ -1,31 +1,25 @@
 #!/bin/bash
 
 # Script para configurar Kong API Gateway para el servicio de carrito
+# Asegúrate de que KONG_ADMIN_URL esté configurado para apuntar a tu API de Admin de Kong
 
 # --- Variables de Configuración ---
-KONG_ADMIN_IP="172.174.245.137"
-KONG_ADMIN_PORT="8089"
-KONG_PROXY_PORT="8088" # <--- AÑADIR ESTA VARIABLE
-FRONTEND_ORIGIN_URL="http://172.174.245.137:4200"
+# Cambia estas variables si tus puertos o IPs son diferentes en el servidor
+KONG_ADMIN_IP="172.174.245.137" # IP del servidor donde corre Kong
+KONG_ADMIN_PORT="8089"      # Puerto del host mapeado a la API de Admin de Kong (8001 del contenedor)
 
 KONG_ADMIN_URL="http://${KONG_ADMIN_IP}:${KONG_ADMIN_PORT}"
-
+FRONTEND_ORIGIN_URL="http://172.174.245.137:4200" # URL de tu frontend
 SERVICE_NAME="cart-service-upstream"
-ROUTE_NAME="cart-api-route-external" # O el nombre que prefieras
-ROUTE_PATH="/cart-api"
+ROUTE_NAME="cart-api-route-external" # Usar un nombre diferente o el mismo 
+ROUTE_PATH="/cart-api" # Path público en Kong para acceder al servicio de carrito
 
 # --- Funciones ---
 function check_command {
-  # Esta función asume que curl -i se usa, y el código de salida de curl es suficiente.
-  # Si curl tiene un error HTTP (ej. 409), su código de salida ($?) puede no ser 0.
-  local curl_exit_code=$?
-  if [ ${curl_exit_code} -ne 0 ]; then
-    # Podríamos verificar códigos de error HTTP específicos si la respuesta se captura.
-    # Por ahora, cualquier error de curl detiene el script.
-    echo "Error: El comando curl anterior falló con código de salida ${curl_exit_code}. Saliendo."
+  if [ $? -ne 0 ]; then
+    echo "Error: El comando anterior falló. Saliendo."
     exit 1
   fi
-  echo "Comando ejecutado." # Mensaje simple de éxito
 }
 
 echo "--- Configurando Kong API Gateway en ${KONG_ADMIN_URL} ---"
@@ -33,10 +27,10 @@ echo "--- Configurando Kong API Gateway en ${KONG_ADMIN_URL} ---"
 # 1. Crear el Service en Kong
 echo ""
 echo "Paso 1: Creando el Service '${SERVICE_NAME}'..."
-curl -s -i -X POST \ # - s para modo silencioso menos output de curl mismo
+curl -i -X POST \
   --url "${KONG_ADMIN_URL}/services/" \
   --header 'Content-Type: application/json' \
-  --data @- << EOF
+  --data @- << EOF # Usamos un 'here document' para el JSON
 {
     "name": "${SERVICE_NAME}",
     "protocol": "http",
@@ -49,7 +43,7 @@ check_command
 # 2. Crear la Route para el Service
 echo ""
 echo "Paso 2: Creando la Route '${ROUTE_NAME}' para el Service '${SERVICE_NAME}'..."
-curl -s -i -X POST \
+curl -i -X POST \
   --url "${KONG_ADMIN_URL}/services/${SERVICE_NAME}/routes" \
   --header 'Content-Type: application/json' \
   --data @- << EOF
@@ -65,8 +59,12 @@ check_command
 
 # 3. Habilitar el Plugin CORS en la Route
 echo ""
-echo "Paso 3: Habilitando el plugin CORS para la Route '${ROUTE_NAME}'..."
-curl -s -i -X POST \
+echo "Paso 3: Habilitando/Actualizando el plugin CORS para la Route '${ROUTE_NAME}'..."
+# Para hacer esto idempotente, podríamos intentar un PUT a /routes/{routeNameOrId}/plugins/{pluginId}
+# o DELETE y luego POST. Por simplicidad para un script inicial, un POST está bien,
+# aunque si lo ejecutas múltiples veces podría crear múltiples instancias del plugin si no se maneja.
+# Una mejor forma sería verificar si ya existe. Por ahora, lo dejamos como POST.
+RESPONSE=$(curl -s -i -X POST \
   --url "${KONG_ADMIN_URL}/routes/${ROUTE_NAME}/plugins" \
   --header 'Content-Type: application/json' \
   --data @- << EOF
@@ -82,11 +80,13 @@ curl -s -i -X POST \
     }
 }
 EOF
+)
 check_command
 
 echo ""
-echo "--- Configuración de Kong completada ---"
-echo "Tu servicio de carrito debería ser accesible a través de Kong en: http://${KONG_ADMIN_IP}:${KONG_PROXY_PORT}${ROUTE_PATH}/api/v1/cart/..."
-echo "(Asegúrate de que el puerto del proxy ${KONG_PROXY_PORT} y el puerto admin ${KONG_ADMIN_PORT} estén abiertos en el firewall del servidor)"
+echo "--- Configuración de Kong completada exitosamente ---"
+echo "Tu servicio de carrito debería ser accesible a través de Kong en: http://${KONG_ADMIN_IP}:<KONG_PROXY_PORT>${ROUTE_PATH}/api/v1/cart/..."
+echo "(Reemplaza <KONG_PROXY_PORT> con el puerto del proxy de Kong, ej. 8088)"
 
+exit 0
 exit 0
