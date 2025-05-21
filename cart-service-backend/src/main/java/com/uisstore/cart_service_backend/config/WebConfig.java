@@ -16,7 +16,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/v1/**")
                         // Opción 1: Permitir múltiples orígenes específicos
-                        .allowedOrigins("http://localhost:4200", "http://localhost:4300")
+                        .allowedOrigins("http://localhost:4200", "http://localhost:4300", "http://172.174.245.137:4200", "http://10.6.101.125:4200")
                         // Opción 2: Permitir todos los orígenes (SOLO PARA DESARROLLO LOCAL)
                         // .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
